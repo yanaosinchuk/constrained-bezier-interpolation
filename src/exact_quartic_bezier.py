@@ -31,7 +31,7 @@ import numpy as np
 #
 #     strict_bounds=False
 #         Build the interpolant anyway and report bound violations later
-#         using verify_quartic_bezier_constraints(...).
+#         using verify_exact_quartic_bezier_constraints(...).
 #
 # ============================================================
 
