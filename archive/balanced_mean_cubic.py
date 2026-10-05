@@ -1,6 +1,6 @@
 import numpy as np
 
-from functions import (
+from mean_preserving_cubic import (
     _check_endpoint_bounds,
     _enforce_bounded_mean_pair,
     _validate_bounds,
