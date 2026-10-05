@@ -1,21 +1,31 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from pathlib import Path
 
-from functions import (
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+
+from mean_preserving_cubic import (
     build_local_bezier_interpolant,
     evaluate_piecewise_bezier as evaluate_cubic_bezier,
     verify_interpolation_constraints as verify_cubic_constraints,
 )
 
-from functions_quartic_bezier import (
+from exact_quartic_bezier import (
     build_quartic_bezier_interpolant,
     evaluate_piecewise_quartic_bezier as evaluate_exact_quartic_bezier,
     verify_quartic_bezier_constraints,
 )
 
-from functions_quartic_bezier_bounded import (
+from bounded_quartic_bezier import (
     build_bounded_quartic_bezier_interpolant,
     evaluate_piecewise_quartic_bezier as evaluate_bounded_quartic_bezier,
     verify_bounded_quartic_bezier_constraints,
