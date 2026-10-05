@@ -26,7 +26,7 @@ from exact_quartic_bezier import (
 )
 
 from bounded_quartic_bezier import (
-    build_bounded_quartic_bezier_interpolant,
+    build_bounded_quartic_bezier,
     evaluate_piecewise_quartic_bezier as evaluate_bounded_quartic_bezier,
     verify_bounded_quartic_bezier_constraints,
     compute_control_polygon_roughness,
@@ -304,7 +304,7 @@ def main():
     name = "Bounded quartic Bézier (soft derivatives)"
 
     try:
-        controls, derivatives = build_bounded_quartic_bezier_interpolant(
+        controls, derivatives = build_bounded_quartic_bezier(
             x_nodes=x_nodes,
             y_nodes=y_nodes,
             means=means,
