@@ -3,7 +3,7 @@ import numpy as np
 
 # ============================================================
 # Bounded quartic Bézier interpolation with endpoint values,
-# interval means and soft first derivatives
+# interval means, and soft endpoint derivatives
 # ============================================================
 #
 # A quartic Bézier segment has five control points:
@@ -28,7 +28,7 @@ import numpy as np
 # ============================================================
 
 
-def build_bounded_quartic_bezier_interpolant(
+def build_bounded_quartic_bezier(
     x_nodes,
     y_nodes,
     means,
@@ -40,7 +40,9 @@ def build_bounded_quartic_bezier_interpolant(
     """
     Main interface function.
 
-    Construct a bounded piecewise quartic Bézier interpolant.
+    Construct a bounded piecewise quartic Bézier interpolant that exactly
+    preserves endpoint values and interval means while treating endpoint
+    derivatives as soft constraints.
 
     Parameters
     ----------
