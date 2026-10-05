@@ -20,9 +20,9 @@ from mean_preserving_cubic import (
 )
 
 from exact_quartic_bezier import (
-    build_quartic_bezier_interpolant,
+    build_exact_quartic_bezier,
     evaluate_piecewise_quartic_bezier as evaluate_exact_quartic_bezier,
-    verify_quartic_bezier_constraints,
+    verify_exact_quartic_bezier_constraints,
 )
 
 from bounded_quartic_bezier import (
@@ -260,7 +260,7 @@ def main():
     name = "Exact quartic Bézier (diagnostic)"
 
     try:
-        controls, derivatives = build_quartic_bezier_interpolant(
+        controls, derivatives = build_exact_quartic_bezier(
             x_nodes=x_nodes,
             y_nodes=y_nodes,
             means=means,
@@ -283,7 +283,7 @@ def main():
             "x": x_plot,
             "y": y_plot,
             "metrics": compute_error_metrics(y_true, y_plot),
-            "constraints": verify_quartic_bezier_constraints(
+            "constraints": verify_exact_quartic_bezier_constraints(
                 x_nodes=x_nodes,
                 y_nodes=y_nodes,
                 means=means,
