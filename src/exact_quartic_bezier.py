@@ -1,8 +1,8 @@
 import numpy as np
 
 # ============================================================
-# Quartic Bézier interpolation with endpoint values,
-# interval means and first derivatives
+# Exact quartic Bézier interpolation with endpoint values,
+# interval means, and endpoint derivatives
 # ============================================================
 #
 # A quartic Bézier segment has five control points:
@@ -41,7 +41,7 @@ import numpy as np
 # ============================================================
 
 
-def build_quartic_bezier_interpolant(
+def build_exact_quartic_bezier(
     x_nodes,
     y_nodes,
     means,
@@ -52,7 +52,8 @@ def build_quartic_bezier_interpolant(
     strict_bounds=True,
 ):
     """
-    Construct a piecewise quartic Bézier interpolant.
+    Construct a piecewise quartic Bézier interpolant that exactly matches
+    the endpoint values, prescribed interval means, and endpoint derivatives.
 
     Each interval [x_i, x_{i+1}] is represented by one degree-4
     Bézier curve with five scalar control points:
@@ -449,7 +450,7 @@ def evaluate_piecewise_quartic_bezier(x_nodes, controls, num_points=100):
         Support points.
 
     controls : ndarray, shape (n-1, 5)
-        Control points returned by build_quartic_bezier_interpolant(...).
+        Control points returned by build_exact_quartic_bezier(...).
 
     num_points : int
         Number of evaluation points per interval.
@@ -533,7 +534,7 @@ def evaluate_quartic_bezier_at(x_nodes, controls, x_eval):
 # ============================================================
 
 
-def verify_quartic_bezier_constraints(
+def verify_exact_quartic_bezier_constraints(
     x_nodes,
     y_nodes,
     means,
