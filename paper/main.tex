@@ -22,6 +22,7 @@
 \usepackage{array,booktabs}
 \usepackage{float}
 \usepackage{graphicx}
+\graphicspath{{figures/}}
 
 % ------------------------------------------------------------
 % Plots
@@ -1846,16 +1847,17 @@ workflow.
 
 \subsection{Source Codes}
 
-The complete Python and VBA source codes used for the implementation and
-numerical comparison of the investigated methods are provided in the
-Attachments. The mean-preserving cubic B\'ezier implementation is given in
-Listing~\ref{lst:cubic-bezier-code}. The exact quartic B\'ezier
-implementation is given in Listing~\ref{lst:quartic-bezier-code}. The
-modified bounded quartic B\'ezier implementation with soft derivative
-constraints is given in Listing~\ref{lst:bounded-quartic-bezier-code}. The
-script used for numerical comparison is given in
-Listing~\ref{lst:comparison-code}, and the Excel/VBA implementation is given
-in Listing~\ref{lst:vba-bezier-code}.
+The complete Python and VBA implementations used in this work are available
+in the accompanying project repository. The Python implementation comprises
+the mean-preserving cubic B\'ezier method, the exact quartic B\'ezier method,
+and the bounded quartic B\'ezier method with soft derivative constraints.
+A separate comparison script performs the numerical evaluation of the three
+methods. The final bounded quartic method is additionally implemented in
+Excel/VBA for use in a spreadsheet-based workflow.
+
+Selected implementation steps are reproduced in the code listings throughout
+this section, while the complete source files are provided separately in the
+project repository.
 
 \newpage
 \section{Numerical Results and Comparison}
