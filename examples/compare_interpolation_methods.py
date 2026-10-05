@@ -191,14 +191,14 @@ def plot_residuals(results):
 # ============================================================
 
 def main():
-    data_path = Path(__file__).with_name("pegelonline_leunneu_2024.xlsx")
+    data_path = ROOT / "data" / "pegelonline_leunneu_2024.xlsx"
 
     step = 672
     num_points = 500
 
     lower_bound = 0.0
     upper_bound = None
-    derivative_method = "pchip" #finite_difference
+    derivative_method = "pchip" # Alternative: "finite_difference"
 
     x_ref, y_ref = load_reference_data(data_path)
     idx, x_nodes, y_nodes = choose_support_points(x_ref, y_ref, step)
