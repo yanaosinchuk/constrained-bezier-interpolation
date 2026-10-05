@@ -223,6 +223,22 @@ constrained-bezier-interpolation/
 ├── data/
 │   └── pegelonline_leunneu_2024.xlsx
 │
+├── vba/
+│   ├── modBezier.bas
+│   └── bounded_quartic_bezier_demo.xlsm
+│
+├── paper/
+│   ├── main.tex
+│   ├── references.bib
+│   ├── constrained_bezier_interpolation.pdf
+│   └── figures/
+│       ├── Logo-Hochschule-Darmstadt.png
+│       ├── Example_Excel.png
+│       ├── VBA_Table_Result_Example.png
+│       ├── Chart.png
+│       ├── Compare.png
+│       └── Residual_comparison.png
+│
 ├── archive/
 │   ├── balanced_mean_cubic.py
 │   ├── hermite_cubic.py
@@ -231,7 +247,6 @@ constrained-bezier-interpolation/
 │
 ├── README.md
 └── requirements.txt
-```
 
 The `src/` directory contains the current interpolation methods.
 
