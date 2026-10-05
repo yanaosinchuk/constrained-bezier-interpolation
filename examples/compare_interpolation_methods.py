@@ -198,7 +198,7 @@ def main():
 
     lower_bound = 0.0
     upper_bound = None
-    derivative_method = "pchip" # Alternative: "finite_difference"
+    derivative_method = "pchip"  # Alternative: "finite_difference"
 
     x_ref, y_ref = load_reference_data(data_path)
     idx, x_nodes, y_nodes = choose_support_points(x_ref, y_ref, step)
@@ -220,7 +220,7 @@ def main():
     name = "Cubic Bézier (mean, bounded)"
 
     try:
-        controls = build_local_bezier_interpolant(
+        controls = build_mean_preserving_cubic_bezier(
             x_nodes=x_nodes,
             y_nodes=y_nodes,
             means=means,
