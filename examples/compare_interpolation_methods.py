@@ -14,7 +14,7 @@ if str(SRC) not in sys.path:
 
 
 from mean_preserving_cubic import (
-    build_local_bezier_interpolant,
+    build_mean_preserving_cubic_bezier,
     evaluate_piecewise_bezier as evaluate_cubic_bezier,
     verify_interpolation_constraints as verify_cubic_constraints,
 )
