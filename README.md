@@ -248,18 +248,17 @@ constrained-bezier-interpolation/
 ├── README.md
 └── requirements.txt
 
-The `src/` directory contains the current interpolation methods.
+The `src/` directory contains the current Python implementations of the three interpolation methods.
 
-The `examples/` directory contains the main numerical comparison.
+The `examples/` directory contains the main numerical comparison script.
 
-The `archive/` directory contains earlier approaches retained to document the development of the final methods.
+The `data/` directory contains the example time-series data used in the numerical experiments.
 
-## Main Numerical Comparison
+The `vba/` directory contains the Excel/VBA implementation of the final bounded quartic Bézier method together with a demonstration workbook.
 
-The main experiment is implemented in:
+The `paper/` directory contains the complete LaTeX source, bibliography, figures, and compiled PDF of the accompanying technical report.
 
-```text
-examples/compare_interpolation_methods.py
+The `archive/` directory contains earlier interpolation approaches retained to document the development of the final methods.
 ```
 
 It compares:
