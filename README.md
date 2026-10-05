@@ -10,7 +10,7 @@ The main objective is to preserve mathematically meaningful constraints while ob
 
 In scientific and engineering applications, measurements are often available only at relatively sparse time points, while additional information may be known over the intervals between them.
 
-Relevant requirements may include:
+Typical requirements include:
 
 - exact interpolation of measured support values,
 - preservation of prescribed interval means,
@@ -38,55 +38,32 @@ Main function:
 build_mean_preserving_cubic_bezier(...)
 ```
 
-Each interval is represented by a cubic Bézier curve with control points
+For each interval, the method constructs a cubic Bézier curve with control points `P0, P1, P2, P3`.
 
-$$
-P_0,\;P_1,\;P_2,\;P_3.
-$$
+The endpoint values are fixed as:
 
-The endpoint values are fixed by
+```text
+P0 = y_i
+P3 = y_{i+1}
+```
 
-$$
-P_0 = y_i,
-\qquad
-P_3 = y_{i+1}.
-$$
+For a cubic Bézier curve, the interval mean equals the arithmetic mean of the control points:
 
-For a cubic Bézier curve, the interval mean is equal to the arithmetic mean of its control points:
+```text
+mean(B_i) = (P0 + P1 + P2 + P3) / 4
+```
 
-$$
-\operatorname{mean}(B_i)
-=
-\frac{P_0+P_1+P_2+P_3}{4}.
-$$
+Therefore, the internal control points must satisfy:
 
-The internal control points are therefore chosen such that
+```text
+P1 + P2 = 4*m_i - y_i - y_{i+1}
+```
 
-$$
-P_1+P_2
-=
-4m_i-y_i-y_{i+1},
-$$
+where `m_i` is the prescribed mean on interval `[x_i, x_{i+1}]`.
 
-where $m_i$ is the prescribed mean on interval $[x_i,x_{i+1}]$.
+If lower or upper bounds are specified, the pair `(P1, P2)` is projected onto the feasible set while preserving the exact mean condition.
 
-The unconstrained preferred control points are
-
-$$
-P_1
-=
-\frac{2}{3}(y_i+y_{i+1})-2m_i,
-$$
-
-$$
-P_2
-=
-6m_i-\frac{5}{3}(y_i+y_{i+1}).
-$$
-
-If lower or upper bounds are specified, the pair $(P_1,P_2)$ is projected onto the feasible set while preserving the exact mean condition.
-
-Because a scalar Bézier curve lies inside the convex hull of its control points, bounded control points also guarantee a bounded interpolated curve.
+Because a scalar Bézier curve lies inside the convex hull of its control points, bounded control points guarantee a bounded interpolated curve.
 
 ---
 
@@ -104,81 +81,54 @@ Main function:
 build_exact_quartic_bezier(...)
 ```
 
-A quartic Bézier segment contains five control points:
+A quartic Bézier segment has five control points:
 
-$$
-P_0,\;P_1,\;P_2,\;P_3,\;P_4.
-$$
+```text
+P0, P1, P2, P3, P4
+```
 
-This makes it possible to enforce five conditions exactly:
+This allows the method to satisfy five conditions exactly:
 
-$$
-B_i(x_i)=y_i,
-$$
+- endpoint interpolation at `x_i`,
+- endpoint interpolation at `x_{i+1}`,
+- preservation of the prescribed interval mean,
+- derivative matching at `x_i`,
+- derivative matching at `x_{i+1}`.
 
-$$
-B_i(x_{i+1})=y_{i+1},
-$$
+Let:
 
-$$
-\operatorname{mean}(B_i)=m_i,
-$$
+```text
+h_i = x_{i+1} - x_i
+```
 
-$$
-B_i'(x_i)=d_i,
-$$
+Then:
 
-$$
-B_i'(x_{i+1})=d_{i+1}.
-$$
+```text
+P0 = y_i
+P4 = y_{i+1}
+P1 = P0 + (h_i / 4) * d_i
+P3 = P4 - (h_i / 4) * d_{i+1}
+```
 
-Let
+For a quartic Bézier curve, the interval mean equals:
 
-$$
-h_i=x_{i+1}-x_i.
-$$
+```text
+mean(B_i) = (P0 + P1 + P2 + P3 + P4) / 5
+```
 
-The endpoint values give
+So the middle control point is determined by:
 
-$$
-P_0=y_i,
-\qquad
-P_4=y_{i+1}.
-$$
+```text
+P2 = 5*m_i - P0 - P1 - P3 - P4
+```
 
-The endpoint derivative conditions determine
+This means that endpoint values, interval means, and endpoint derivatives are all satisfied exactly.
 
-$$
-P_1=P_0+\frac{h_i}{4}d_i,
-$$
+However, these five exact conditions uniquely determine the control points. As a result, additional physical bounds may become infeasible.
 
-$$
-P_3=P_4-\frac{h_i}{4}d_{i+1}.
-$$
+The implementation therefore supports two modes:
 
-For a quartic Bézier curve,
-
-$$
-\operatorname{mean}(B_i)
-=
-\frac{P_0+P_1+P_2+P_3+P_4}{5}.
-$$
-
-Therefore,
-
-$$
-P_2
-=
-5m_i-P_0-P_1-P_3-P_4.
-$$
-
-The endpoint values, interval mean, and endpoint derivatives are thus satisfied exactly.
-
-However, these five conditions uniquely determine all five control points. Additional physical bounds therefore cannot always be satisfied simultaneously.
-
-The implementation supports two modes:
-
-- `strict_bounds=True`: reject a segment if its control points violate the requested bounds;
+- `strict_bounds=True`: reject a segment if the requested bounds are violated,
 - `strict_bounds=False`: construct the exact interpolant and report bound violations diagnostically.
 
 ---
@@ -205,39 +155,28 @@ This method enforces the following conditions exactly whenever the bounded inter
 
 Endpoint derivatives are treated as preferred values rather than hard constraints.
 
-For interval $[x_i,x_{i+1}]$, the derivative-based target control points are
+For interval `[x_i, x_{i+1}]`, the derivative-based target control points are:
 
-$$
-P_1^{\mathrm{ref}}
-=
-P_0+\frac{h_i}{4}d_i,
-$$
+```text
+P1_ref = P0 + (h_i / 4) * d_i
+P3_ref = P4 - (h_i / 4) * d_{i+1}
+```
 
-$$
-P_3^{\mathrm{ref}}
-=
-P_4-\frac{h_i}{4}d_{i+1}.
-$$
+The exact mean condition requires:
 
-The exact mean condition requires
+```text
+P1 + P2 + P3 = 5*m_i - P0 - P4
+```
 
-$$
-P_1+P_2+P_3
-=
-5m_i-P_0-P_4.
-$$
+The method chooses `P1` and `P3` as close as possible to their derivative-based target values while satisfying the requested bounds and leaving a feasible value for `P2`.
 
-The method chooses $P_1$ and $P_3$ as close as possible to the derivative-based target values while satisfying the requested bounds and leaving a feasible value for $P_2$.
+The middle control point is then determined by:
 
-The middle control point is then determined by
+```text
+P2 = 5*m_i - P0 - P4 - P1 - P3
+```
 
-$$
-P_2
-=
-5m_i-P_0-P_4-P_1-P_3.
-$$
-
-This preserves the endpoint values and interval means exactly while allowing the endpoint derivatives to deviate from their preferred values when necessary to maintain physical admissibility.
+This preserves endpoint values and interval means exactly while allowing endpoint derivatives to deviate from their preferred values when necessary to maintain physical admissibility.
 
 ## Derivative Estimation
 
@@ -250,9 +189,7 @@ finite_difference
 
 The default is a NumPy implementation of a shape-preserving PCHIP-style derivative estimate.
 
-It uses neighboring secant slopes and sets the derivative to zero at interior points where the adjacent slopes change sign, reducing artificial oscillations and overshoot.
-
-The alternative method uses standard finite differences:
+The alternative method uses:
 
 ```python
 numpy.gradient
@@ -321,7 +258,7 @@ The comparison reports the following approximation metrics:
 - root mean squared error (RMSE),
 - mean absolute error (MAE),
 - maximum absolute error,
-- coefficient of determination $R^2$.
+- coefficient of determination (`R²`).
 
 It also evaluates method-specific constraint diagnostics, including:
 
@@ -355,8 +292,6 @@ The timestamps are converted internally to elapsed hours relative to the first o
 A subset of the reference observations is then selected as support points using a configurable spacing.
 
 For each interval between consecutive support points, an interval mean is computed from the reference data and supplied to the interpolation methods as an additional constraint.
-
-The dataset is included as an example for reproducing the numerical comparison. Exact source attribution and applicable data-usage terms should be documented alongside the dataset before broader redistribution.
 
 ## Installation
 
@@ -435,7 +370,7 @@ These methods can be compared using:
 python archive/compare_cubic_previous_methods.py
 ```
 
-They are not part of the main implementation, but are retained to document the progression from earlier interpolation approaches to the final constrained Bézier methods.
+They are not part of the main implementation but are retained to document the progression from earlier interpolation approaches to the final constrained Bézier methods.
 
 ## Methodological Distinction
 
