@@ -1,11 +1,11 @@
 import numpy as np
 
 # ============================================================
-# Local cubic Bézier interpolation
+# Mean-preserving bounded cubic Bézier interpolation
 # ============================================================
 
 
-def build_local_bezier_interpolant(
+def build_mean_preserving_cubic_bezier(
     x_nodes,
     y_nodes,
     means,
@@ -13,6 +13,9 @@ def build_local_bezier_interpolant(
     upper_bound=None,
 ):
     """
+    Construct a piecewise cubic Bézier interpolant that preserves the
+    prescribed mean on each interval and optionally satisfies physical bounds.
+
     Parameters
     ----------
     x_nodes : array-like, shape (n,)
