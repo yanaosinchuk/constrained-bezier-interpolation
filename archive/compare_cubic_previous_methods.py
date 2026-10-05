@@ -1,24 +1,38 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from pathlib import Path
 
-from functions import (
-    build_local_bezier_interpolant,
+
+# Project paths
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+
+from mean_preserving_cubic import (
+    build_mean_preserving_cubic_bezier,
     evaluate_piecewise_bezier as eval_local_bezier,
     verify_interpolation_constraints,
 )
-from functions_improved_bezier import (
+
+from balanced_mean_cubic import (
     build_balanced_bezier_interpolant,
     evaluate_piecewise_bezier as eval_balanced_bezier,
 )
-from functions_derivative_bezier import (
+
+from hermite_cubic import (
     build_derivative_bezier_interpolant,
     evaluate_piecewise_bezier as eval_derivative_bezier,
     verify_derivative_interpolation_constraints,
     verify_bound_constraints,
 )
-from functions_previous_attemps import (
+
+from legacy_spline_methods import (
     hermite_vier_spline,
     poly,
 )
@@ -175,7 +189,7 @@ def print_constraint_info(results):
 
 
 def main():
-    data_path = Path(__file__).with_name("pegelonline_leunneu_2024.xlsx")
+    data_path = ROOT / "data" / "pegelonline_leunneu_2024.xlsx"
 
     # -------- settings --------
     step = 672               # support-point spacing in samples
@@ -199,7 +213,7 @@ def main():
     # 1) Original local cubic Bézier with exact mean condition
     # ========================================================
     try:
-        controls = build_local_bezier_interpolant(
+        controls = build_mean_preserving_cubic_bezier(
             x_nodes,
             y_nodes,
             means,
