@@ -118,7 +118,7 @@ def evaluate_quartic_piecewise(x_nodes, coeffs, num_points=400):
 
 
 # ============================================================
-# Pretty printing
+# Printing
 # ============================================================
 
 
