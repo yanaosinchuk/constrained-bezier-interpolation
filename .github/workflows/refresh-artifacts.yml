@@ -57,5 +57,6 @@ jobs:
             echo "No artifact changes to commit."
           else
             git commit -m "Refresh numerical figures and report PDF [skip ci]"
+            git pull --rebase origin main
             git push
           fi
