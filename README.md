@@ -77,6 +77,15 @@ P1 + P2 = 4*m_i - y_i - y_{i+1}
 
 where `m_i` is the prescribed mean on interval `[x_i, x_{i+1}]`.
 
+Among all pairs satisfying the mean constraint, the unconstrained preferred controls minimize the integral of the squared second derivative:
+
+```text
+P1_pref = 2*m_i - (1/3)*P0 - (2/3)*P3
+P2_pref = 2*m_i - (2/3)*P0 - (1/3)*P3
+```
+
+For constant data (`P0 = P3 = m_i`), this correctly gives `P1 = P2 = m_i`, so the reconstructed segment remains constant.
+
 If lower or upper bounds are specified, the pair `(P1, P2)` is projected onto the feasible set while preserving the exact mean condition.
 
 Because a scalar Bézier curve lies inside the convex hull of its control points, bounded control points guarantee a bounded interpolated curve.
