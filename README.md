@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/yanaosinchuk/constrained-bezier-interpolation/actions/workflows/tests.yml/badge.svg)](https://github.com/yanaosinchuk/constrained-bezier-interpolation/actions/workflows/tests.yml)
 
+[Technical report](paper/constrained_bezier_interpolation.pdf) · [LaTeX source](paper/main.tex) · [MIT License](LICENSE)
+
 Mean-preserving and bounded cubic and quartic Bézier interpolation methods for sparse time-series data.
 
 This project implements and compares constrained Bézier interpolation methods for situations in which sparse support values are available together with additional interval information, such as prescribed means and physical bounds.
@@ -250,7 +252,8 @@ constrained-bezier-interpolation/
 │   ├── conftest.py
 │   ├── test_common.py
 │   ├── test_cubic_method.py
-│   └── test_quartic_methods.py
+│   ├── test_quartic_methods.py
+│   └── test_reference_experiment.py
 │
 ├── data/
 │   ├── README.md
@@ -284,6 +287,8 @@ constrained-bezier-interpolation/
 │
 ├── .gitattributes
 ├── .gitignore
+├── CITATION.cff
+├── LICENSE
 ├── README.md
 ├── requirements.txt
 └── requirements-dev.txt
@@ -293,7 +298,7 @@ The `src/` directory contains the three current Python interpolation methods tog
 
 The `examples/` directory contains the main numerical comparison script.
 
-The `tests/` directory contains automated regression and constraint tests for the cubic method, shared quartic utilities, and both quartic interpolation methods. The GitHub Actions workflow runs the tests and the complete numerical comparison automatically on every push and pull request.
+The `tests/` directory contains automated regression and constraint tests for the cubic method, shared quartic utilities, both quartic interpolation methods, and the complete reference experiment. The GitHub Actions workflow runs the tests and the numerical comparison automatically on every push and pull request.
 
 The `data/` directory contains the example time-series data used in the numerical experiments.
 
@@ -395,7 +400,7 @@ Run the automated test suite from the repository root:
 python -m pytest -q
 ```
 
-The tests verify the cubic and quartic interpolation constraints, shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, and expected failure for infeasible constraint combinations.
+The tests verify the cubic and quartic interpolation constraints, shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, expected failure for infeasible constraint combinations, and numerical regression of the full reference experiment.
 
 A GitHub Actions workflow runs the test suite and an end-to-end execution of the numerical comparison automatically on every push and pull request.
 
@@ -492,6 +497,14 @@ Potential applications include:
 - scientific data processing,
 - constrained numerical interpolation,
 - reconstruction of sparsely sampled physical measurements.
+
+## License and Citation
+
+The software in this repository is released under the [MIT License](LICENSE), so it may be used, modified, and redistributed subject to the licence terms.
+
+The hydrological source data are separate from the software licence. The underlying PEGELONLINE / WSV measurements are provided under the Data Licence Germany – Zero – Version 2.0; see [`data/README.md`](data/README.md) for details.
+
+For academic use, citation metadata are provided in [`CITATION.cff`](CITATION.cff). GitHub can use this file to generate a formatted repository citation.
 
 ## Author
 
