@@ -120,6 +120,27 @@ def print_metrics_table(results):
         )
 
 
+def add_dense_bound_diagnostics(constraints, y_values, lower_bound, upper_bound):
+    y_values = np.asarray(y_values, dtype=float)
+
+    constraints["dense_minimum"] = float(np.min(y_values))
+    constraints["dense_maximum"] = float(np.max(y_values))
+
+    if lower_bound is None:
+        constraints["dense_lower_violation"] = 0.0
+    else:
+        constraints["dense_lower_violation"] = float(
+            np.max(np.maximum(lower_bound - y_values, 0.0))
+        )
+
+    if upper_bound is None:
+        constraints["dense_upper_violation"] = 0.0
+    else:
+        constraints["dense_upper_violation"] = float(
+            np.max(np.maximum(y_values - upper_bound, 0.0))
+        )
+
+
 def print_constraint_report(results):
     print()
     print("=" * 96)
@@ -258,6 +279,12 @@ def main(save_plots=None, show=True):
         results[name]["constraints"]["control_polygon_roughness"] = (
             compute_control_polygon_roughness(controls)
         )
+        add_dense_bound_diagnostics(
+            results[name]["constraints"],
+            y_plot,
+            lower_bound,
+            upper_bound,
+        )
 
     except Exception as e:
         results[name] = {"error": str(e)}
@@ -305,6 +332,12 @@ def main(save_plots=None, show=True):
         results[name]["constraints"]["control_polygon_roughness"] = (
             compute_control_polygon_roughness(controls)
         )
+        add_dense_bound_diagnostics(
+            results[name]["constraints"],
+            y_plot,
+            lower_bound,
+            upper_bound,
+        )
 
     except Exception as e:
         results[name] = {"error": str(e)}
@@ -344,6 +377,12 @@ def main(save_plots=None, show=True):
         )
 
         constraints["control_polygon_roughness"] = compute_control_polygon_roughness(controls)
+        add_dense_bound_diagnostics(
+            constraints,
+            y_plot,
+            lower_bound,
+            upper_bound,
+        )
 
         results[name] = {
             "x": x_plot,
