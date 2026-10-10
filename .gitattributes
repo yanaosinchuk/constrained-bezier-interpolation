@@ -1,0 +1,7 @@
+# Keep the repository language statistics focused on the implementation.
+paper/** linguist-documentation
+
+# Binary scientific/office artifacts.
+*.xlsx binary
+*.xlsm binary
+*.pdf binary
