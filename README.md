@@ -1,5 +1,7 @@
 # Constrained Bézier Interpolation
 
+[![tests](https://github.com/yanaosinchuk/constrained-bezier-interpolation/actions/workflows/tests.yml/badge.svg)](https://github.com/yanaosinchuk/constrained-bezier-interpolation/actions/workflows/tests.yml)
+
 Mean-preserving and bounded cubic and quartic Bézier interpolation methods for sparse time-series data.
 
 This project implements and compares constrained Bézier interpolation methods for situations in which sparse support values are available together with additional interval information, such as prescribed means and physical bounds.
@@ -221,6 +223,11 @@ constrained-bezier-interpolation/
 ├── examples/
 │   └── compare_interpolation_methods.py
 │
+├── tests/
+│   ├── conftest.py
+│   ├── test_common.py
+│   └── test_quartic_methods.py
+│
 ├── data/
 │   └── pegelonline_leunneu_2024.xlsx
 │
@@ -246,13 +253,20 @@ constrained-bezier-interpolation/
 │   ├── legacy_spline_methods.py
 │   └── compare_cubic_previous_methods.py
 │
+├── .github/
+│   └── workflows/
+│       └── tests.yml
+│
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── requirements-dev.txt
 ```
 
 The `src/` directory contains the three current Python interpolation methods together with shared quartic utilities in `common.py`.
 
 The `examples/` directory contains the main numerical comparison script.
+
+The `tests/` directory contains automated regression and constraint tests for the shared quartic utilities and both quartic interpolation methods. The GitHub Actions workflow runs these tests automatically on every push and pull request.
 
 The `data/` directory contains the example time-series data used in the numerical experiments.
 
@@ -337,6 +351,24 @@ pandas
 matplotlib
 openpyxl
 ```
+
+## Testing
+
+Install the development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run the automated test suite from the repository root:
+
+```bash
+python -m pytest -q
+```
+
+The tests verify shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, and expected failure for infeasible constraint combinations.
+
+A GitHub Actions workflow runs the same test suite automatically on every push and pull request.
 
 ## Running the Main Experiment
 
