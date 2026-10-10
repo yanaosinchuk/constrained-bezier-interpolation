@@ -858,7 +858,7 @@ plots the results.
     label={lst:python-main-workflow}
 ]
 def main():
-    data_path = Path(__file__).with_name("pegelonline_leunneu_2024.xlsx")
+    data_path = ROOT / "data" / "pegelonline_leunneu_2024.xlsx"
 
     step = 672
     num_points = 500
@@ -900,7 +900,7 @@ timestamps and measured values.
     \centering
     \includegraphics[width=0.4\textwidth]{Example_Excel.png}
     \caption{Example of a table}
-    \label{fig:bild}
+    \label{fig:excel-input-example}
 \end{figure}
 
 Since B\'ezier interpolation is performed on
@@ -1015,8 +1015,8 @@ def _compute_bezier_control_points(
         P0 = y0
         P3 = y1
 
-        preferred_P1 = (2.0 / 3.0) * (y0 + y1) - 2.0 * m
-        preferred_P2 = 6.0 * m - (5.0 / 3.0) * (y0 + y1)
+        preferred_P1 = 2.0 * m - (1.0 / 3.0) * y0 - (2.0 / 3.0) * y1
+        preferred_P2 = 2.0 * m - (2.0 / 3.0) * y0 - (1.0 / 3.0) * y1
 
         P1, P2 = _enforce_bounded_mean_pair(
             preferred_P1,
@@ -1623,17 +1623,21 @@ After the Python implementation had been tested, the bounded quartic B\'ezier me
 The VBA implementation follows the same main steps as the Python version. It reads the original data from columns A and B, builds support points, computes empirical interval means, checks feasibility, constructs bounded quartic B\'ezier control points, evaluates the interpolated curve, writes the results back to the worksheet.
 
 \begin{figure}[H]
-    \hspace{-3.5cm}
-    \includegraphics[width=1.5\textwidth]{VBA_Table_Result_Example.png}
+    \centering
+    \makebox[\textwidth][c]{%
+        \includegraphics[width=0.98\paperwidth]{VBA_Table_Result_Example.png}%
+    }
     \caption{Example of a final table}
-    \label{fig:bild}
+    \label{fig:vba-table-result-example}
 \end{figure}
 
 Then it creates a comparison chart for visualization of the interpolation results.
 
 \begin{figure}[H]
-    \hspace{-3.25cm}
-    \includegraphics[width=1.5\textwidth]{Chart.png}
+    \centering
+    \makebox[\textwidth][c]{%
+        \includegraphics[width=0.98\paperwidth]{Chart.png}%
+    }
     \caption{Interpolated curve compared with measured data.}
     \label{fig:chart}
 \end{figure}
@@ -1929,7 +1933,7 @@ bending and possible oscillatory behavior.
 Method & RMSE & MAE & Max. error & $R^2$ & Roughness \\
 \midrule
 Cubic B\'ezier baseline, mean-preserving
-& 12.819150 & 7.452175 & 100.849592 & 0.910025 & $3.806379\times 10^{6}$ \\
+& 12.007279 & 5.330826 & 113.560781 & 0.921061 & $1.631647\times 10^{5}$ \\
 
 Quartic B\'ezier, mean and hard derivatives
 & 11.242047 & 5.560609 & 94.711293 & 0.930802 & $2.768685\times 10^{6}$ \\
@@ -1943,33 +1947,35 @@ Bounded quartic B\'ezier with soft derivatives
 \label{tab:approximation-quality}
 \end{table}
 
-Table~\ref{tab:approximation-quality} is needed to quantify how closely each
-method follows the reference data.
+Table~\ref{tab:approximation-quality} shows that no single method dominates
+all diagnostic criteria. The bounded quartic method achieves the smallest
+RMSE, \(10.947902\), and the largest coefficient of determination,
+\(R^2=0.934376\). Relative to the cubic baseline, its RMSE is lower by
+approximately \(8.8\%\), while \(R^2\) increases by approximately \(0.0133\).
 
-The exact quartic B\'ezier method improves  an RMSE, an MAE, and \(R^2\). This shows that the additional degree of freedom in the quartic formulation and the use of derivative
-information improve the approximation quality.
+The cubic method, however, gives the smallest MAE, \(5.330826\), compared with
+\(5.470358\) for the bounded quartic method. Thus, the bounded quartic method
+reduces the squared-error-dominated RMSE while the cubic method retains a
+slightly smaller average absolute deviation. The bounded quartic MAE is
+approximately \(2.6\%\) larger than the cubic MAE.
 
-The bounded quartic B\'ezier method with soft derivative constraints gives
-the best overall approximation quality among the tested methods. It has the
-lowest RMSE, the lowest MAE, and the largest value of \(R^2\). Compared with
-the cubic baseline, the bounded quartic method reduces the RMSE by
-approximately \(14.6\%\) and the MAE by approximately \(26.6\%\). The
-coefficient of determination increases from \(0.910025\) to \(0.934376\).
+The maximum absolute error also reveals a trade-off. Both quartic methods have
+the same maximum error of \(94.711293\), which is lower than the cubic value
+of \(113.560781\). This indicates that the quartic constructions handle the
+largest local deviations more effectively for the chosen support spacing.
 
-The roughness values show a similar tendency. The cubic method has the largest
-control-polygon roughness, \(3.806379\times 10^6\). The exact quartic method
-reduces this value to \(2.768685\times 10^6\), while the bounded quartic
-method gives the smallest roughness, \(2.136015\times 10^6\). Thus, the
-bounded quartic method not only improves the approximation error but also
-produces a less rough control structure.
+The roughness diagnostic leads to a different conclusion. The cubic
+construction has by far the smallest control-polygon roughness,
+\(1.631647\times 10^{5}\). The exact quartic and bounded quartic values are
+\(2.768685\times 10^{6}\) and \(2.136015\times 10^{6}\), respectively.
+Consequently, the cubic construction is substantially smoother according to
+this discrete control-polygon diagnostic, whereas the quartic methods trade
+part of this smoothness for greater local flexibility.
 
-The maximum absolute error is reduced when moving from the cubic method to
-the quartic methods. However, the exact quartic and bounded quartic methods
-have the same maximum error of \(94.711293\). This suggests that the largest
-local deviation is caused by a difficult interval or a sharp local feature in
-the data, which is not fully resolved by the selected support spacing.
-Therefore, the maximum error should be interpreted together with the residual
-plot rather than as the only criterion for method quality.
+The exact quartic method lies between the cubic and bounded quartic methods in
+terms of RMSE and \(R^2\), but its MAE is the largest of the three. Its role in
+the comparison is therefore especially useful as a diagnostic reference for
+the effect of enforcing endpoint derivatives exactly.
 
 \subsection{Constraint Verification}
 
@@ -1990,9 +1996,9 @@ Method
 \midrule
 Cubic B\'ezier baseline
 & $0$
+& $1.421085\times 10^{-14}$
 & $0$
-& $0$
-& 4.825098
+& 6.265012
 & $0$ \\
 
 Quartic B\'ezier
@@ -2021,11 +2027,11 @@ which is expected because the first and last control points of each B\'ezier
 segment are chosen to be the corresponding support values.
 
 The interval mean is also preserved up to numerical precision. For the cubic
-method, the maximum mean error is zero in the reported output. For the
-quartic methods, the maximum mean error is \(2.842171\times 10^{-14}\), which
-is negligible and can be interpreted as floating-point round-off error.
-Therefore, the mean-preserving condition is successfully enforced by all
-three constructions.
+method, the maximum mean error is \(1.421085\times 10^{-14}\). For the
+quartic methods, the maximum mean error is \(2.842171\times 10^{-14}\).
+These values are negligible and can be interpreted as floating-point
+round-off error. Therefore, the mean-preserving condition is successfully
+enforced by all three constructions.
 
 The main difference between the methods appears in the lower-bound
 verification. The exact quartic method has a control lower violation of
@@ -2107,25 +2113,23 @@ reference data, while a negative residual means that it overestimates them.
 
 Figure~\ref{fig:method-comparison} shows that all three methods reproduce the
 general structure of the reference data. The largest difficulties occur near
-sharp peaks and rapid transitions. This is expected, because the support
+sharp peaks and rapid transitions. This is expected because the support
 points are relatively sparse compared with the full reference data set, so
 the interpolating curves must reconstruct local behavior over long support
 intervals.
 
-The cubic B\'ezier baseline follows the general trend, but it is less
-flexible than the quartic methods. This is visible especially near larger
-peaks, where the cubic curve cannot always reproduce the local shape as
-closely. The exact quartic and bounded quartic methods generally follow the
-reference data more accurately because they use derivative information and
-have one additional control point.
+The cubic B\'ezier baseline produces the smoothest control structure and
+follows the overall trend well. The quartic methods have one additional
+control point and use derivative information, which gives them greater local
+flexibility. This flexibility reduces RMSE and the largest local error, but it
+also increases the control-polygon roughness relative to the cubic method.
 
-However, the exact quartic method cannot be selected as the final method only
-because it looks accurate. Table~\ref{tab:constraint-verification} shows that
-it violates the lower-bound condition at the level of the control points.
-Therefore, it does not provide the required convex-hull-based physical
-guarantee. The bounded quartic method retains the improved flexibility of the
-quartic formulation while correcting the internal control points whenever
-necessary to preserve physical admissibility.
+The exact quartic method cannot be selected solely on visual accuracy.
+Table~\ref{tab:constraint-verification} shows that it violates the lower-bound
+condition at the level of the control points. Therefore, it does not provide
+the required convex-hull-based physical guarantee. The bounded quartic method
+retains the local flexibility of the quartic formulation while correcting the
+internal control points whenever necessary to preserve physical admissibility.
 
 \begin{figure}[H]
     \centering
@@ -2135,111 +2139,104 @@ necessary to preserve physical admissibility.
 \end{figure}
 
 Figure~\ref{fig:residual-comparison} gives a more detailed view of the local
-errors. The residuals are largest near sharp peaks and rapid changes,
-especially in the first part of the time series. This explains why the
-maximum absolute error remains relatively large even for the quartic methods.
-The RMSE and MAE values show an overall improvement, but the largest local
-deviations are concentrated in difficult intervals where the data change much
-faster than the spacing of the support points.
-
-The residuals of the bounded quartic method are generally smaller than those
-of the cubic baseline, which is consistent with the lower RMSE and MAE values
-in Table~\ref{tab:approximation-quality}. The residual behavior of the exact
-quartic and bounded quartic methods is often similar, but the bounded method
-has the additional advantage of satisfying the lower-bound condition through
-bounded control points.
+errors. The largest residuals occur near sharp peaks and rapid changes,
+especially in the first part of the time series. The bounded quartic method
+reduces the squared-error contribution of the larger deviations sufficiently
+to obtain the smallest RMSE, while the cubic method has the smallest MAE.
+Thus, the residual comparison confirms that the methods emphasize different
+aspects of approximation quality rather than producing a strict ranking under
+all metrics.
 
 \subsection{Overall Interpretation}
 
-The comparison shows that the bounded quartic B\'ezier method with soft
-derivative constraints provides the best compromise among the three tested
-methods. It achieves the best approximation quality according to RMSE, MAE,
-and \(R^2\), reduces the control-polygon roughness compared with the cubic and
-exact quartic methods, preserves endpoint values and interval means up to
-numerical precision, and satisfies the lower-bound constraint.
+The comparison reveals a clear trade-off between smoothness, derivative
+fidelity, approximation accuracy, and physical admissibility.
 
-The cubic B\'ezier baseline is stable and physically admissible, but it is
-less accurate and less flexible. The exact quartic method improves the
-approximation quality and satisfies the derivative constraints almost exactly,
-but it violates the lower-bound condition at the level of the control points.
-The bounded quartic method combines the advantages of the quartic formulation
-with physical admissibility by treating derivative information as soft rather
-than mandatory.
+The cubic B\'ezier method is the simplest and smoothest of the three according
+to the control-polygon roughness diagnostic. It preserves endpoint values,
+interval means, and the lower bound, and it achieves the smallest MAE. Its
+main disadvantage in this experiment is the larger RMSE and maximum absolute
+error.
 
-Therefore, the bounded quartic B\'ezier method is the most suitable method for
-the present application. It preserves the essential mathematical constraints,
-uses derivative information when it is compatible with the physical bound, and
-modifies it only when necessary to maintain admissibility.
+The exact quartic method improves RMSE, maximum error, and \(R^2\) relative to
+the cubic method and reproduces the prescribed endpoint derivatives almost
+exactly. However, its control points violate the lower bound, so the
+convex-hull-based boundedness guarantee is lost.
+
+The bounded quartic method gives the smallest RMSE and the largest \(R^2\),
+matches the lower maximum error of the exact quartic method, preserves
+endpoint values and interval means, and maintains the lower-bound guarantee.
+It does this by allowing derivative values to change when exact derivative
+matching is incompatible with the physical constraint.
+
+For the present application, in which physical admissibility is mandatory and
+large local deviations are important, the bounded quartic method therefore
+provides the most appropriate compromise. The corrected cubic method remains
+a strong alternative when simplicity, low average absolute error, and a
+smoother control polygon are prioritized.
 
 \newpage
 \section{Conclusion}
 This work investigated B\'ezier-based interpolation methods for the
 approximation of hydrochemical and hydrological time-series data under
-simultaneous mathematical and physical constraints. 
+simultaneous mathematical and physical constraints.
 
-The main objective was not only to construct a smooth interpolating curve,
-but also to preserve important properties of the original data.
+Three B\'ezier-based methods were developed and compared. The mean-preserving
+cubic construction enforces endpoint values, interval means, and physical
+bounds while selecting the unconstrained internal control points by minimizing
+a second-derivative smoothness functional. The exact quartic construction
+adds hard endpoint-derivative constraints. The bounded quartic construction
+instead treats those derivatives as soft targets so that physical bounds can
+still be enforced.
 
-Three B\'ezier-based methods were developed and compared. The first method
-was a mean-preserving cubic B\'ezier construction. This method satisfied the
-endpoint and mean constraints and remained physically admissible, but it had
-less flexibility in representing local changes of the data. The second method
-was an exact quartic B\'ezier formulation in which endpoint values, interval
-means, and endpoint derivatives were imposed as hard constraints. This method
-improved the approximation quality, but it also demonstrated an important
-limitation: once all five quartic control points are fixed by these
-constraints, there is no remaining freedom to enforce physical bounds. As a
-result, the exact quartic method may violate the lower-bound condition at the
-level of the control points.
+The corrected numerical comparison does not produce one method that is best
+under every metric. The cubic method achieves the smallest MAE,
+\(5.330826\), and by far the smallest control-polygon roughness,
+\(1.631647\times 10^{5}\). The bounded quartic method achieves the smallest
+RMSE, \(10.947902\), and the largest coefficient of determination,
+\(R^2=0.934376\). Both quartic methods reduce the maximum absolute error from
+\(113.560781\) for the cubic method to \(94.711293\).
 
-The final method was a bounded quartic B\'ezier formulation with soft
-derivative constraints. In this method, derivative estimates are used as
-reference slopes rather than mandatory constraints. The endpoint values and
-interval means are preserved exactly, while the internal control points are
-projected onto a feasible set whenever the derivative-based construction
-would violate the prescribed physical bounds. This makes it possible to keep
-the advantages of derivative-based quartic interpolation while maintaining
-physical admissibility.
+The exact quartic method demonstrates the main structural limitation of hard
+derivative constraints. Although it matches the prescribed endpoint
+derivatives to numerical precision, its control polygon violates the lower
+bound by \(1.131798\times 10^{2}\). The evaluated curve remains positive on
+the chosen dense grid, but the convex-hull-based boundedness guarantee is
+lost.
 
-The numerical comparison showed that the bounded quartic B\'ezier method
-provided the best compromise among the tested methods. It achieved the lowest
-RMSE and MAE values and the highest coefficient of determination \(R^2\). It
-also reduced the control-polygon roughness compared with the cubic and exact
-quartic constructions. At the same time, it preserved endpoint values and
-interval means up to numerical precision and avoided the lower-bound
-violation observed in the exact quartic diagnostic method. Thus, the bounded
-quartic formulation was the most suitable method for the present application.
+The bounded quartic formulation resolves this conflict by modifying the
+preferred derivative information only when necessary. In the reported
+experiment, its maximum derivative change is \(1.361424\), while endpoint
+values and interval means remain satisfied up to numerical precision and the
+control points satisfy the lower bound.
 
-The graphical comparison and residual analysis confirmed the quantitative
-results. All methods captured the general structure of the measured time
-series, but the largest errors occurred near sharp peaks and rapid
-transitions. This is expected because the support points were relatively
-sparse compared with the full reference data set. The quartic methods were
-better able to represent the local shape of the data than the cubic method,
-while the bounded quartic method additionally preserved the required physical
-constraints.
+These results show that method selection depends on the priorities of the
+application. The cubic construction is attractive when simplicity, small
+average absolute error, and low roughness are especially important. The
+bounded quartic method is preferable when physical admissibility must be
+guaranteed while reducing larger local deviations and retaining
+derivative-informed local flexibility. For the present application, this
+combination makes the bounded quartic method the preferred final method.
 
-The methods have implementations and tests in Python. The final bounded quartic method
-was then translated into Excel/VBA. This second implementation makes the
-method usable in a spreadsheet-based workflow.
+The graphical comparison and residual analysis show that the largest errors
+are concentrated near sharp peaks and rapid transitions. This is expected
+because the selected support points are sparse relative to the full reference
+series. Consequently, the quality of the reconstruction remains sensitive to
+support-point spacing and derivative estimation.
 
-Several limitations remain. The quality of the interpolation depends on the
-choice of support points and on the reliability of the derivative estimates.
-If the support points are too far apart, sharp peaks or rapid local changes
-may not be reconstructed accurately. Furthermore, in this work the prescribed
-interval means were computed as arithmetic averages of the measured values.
-For data with irregular time spacing, a time-weighted mean could be more
-appropriate. Finally, only a lower physical bound was considered in the
-numerical experiments, while future applications may require both lower and
-upper bounds.
+The methods are implemented and tested in Python, and the final bounded
+quartic method is additionally available in Excel/VBA for spreadsheet-based
+use. Automated tests verify the principal interpolation constraints and are
+executed in continuous integration.
 
-Future work could therefore focus on adaptive support point selection,
-improved derivative estimation, time-weighted mean preservation, automatic
-detection of difficult intervals, and extension of the bounded construction
-to more general physical constraints. Nevertheless, the results of this research
-show that the bounded quartic B\'ezier method with soft derivative constraints
-is a promising approach for physically consistent and mean-preserving
-interpolation of sparse experimental time-series data.
+Several limitations remain. The prescribed interval means in the present
+study are arithmetic averages of the measured values. For irregularly spaced
+data, a time-weighted mean would be more appropriate. Only a lower physical
+bound was active in the numerical experiment, whereas future applications may
+require both lower and upper bounds. Further work could therefore investigate
+adaptive support-point selection, time-weighted mean preservation, improved
+derivative estimation, and automatic identification of intervals in which the
+constraints compete most strongly.
 
 % ------------------------------------------------------------
 % Bibliography
