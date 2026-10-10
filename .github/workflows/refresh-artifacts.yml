@@ -1,5 +1,7 @@
 name: refresh-artifacts
 
+# Temporary helper used to refresh committed numerical artifacts.
+
 on:
   push:
 
