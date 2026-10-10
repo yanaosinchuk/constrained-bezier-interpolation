@@ -8,6 +8,20 @@ This project implements and compares constrained Bézier interpolation methods f
 
 The main objective is to preserve mathematically meaningful constraints while obtaining a continuous, piecewise-smooth reconstruction of the underlying time series.
 
+## Results at a Glance
+
+Using 35,136 reference observations, 54 support points, and 53 interpolation intervals, the current comparison gives:
+
+| Method | RMSE | MAE | Max. error | R² | Control-polygon roughness |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Mean-preserving cubic | 12.007279 | **5.330826** | 113.560781 | 0.921061 | **1.631647e5** |
+| Exact quartic | 11.242047 | 5.560609 | **94.711293** | 0.930802 | 2.768685e6 |
+| Bounded quartic | **10.947902** | 5.470358 | **94.711293** | **0.934376** | 2.136015e6 |
+
+The bounded quartic method gives the lowest RMSE and highest `R²` while preserving the physical lower bound. The cubic method remains competitive: it has the lowest MAE and by far the smallest control-polygon roughness. The exact quartic method is useful as a diagnostic reference because exact derivative matching can make the requested physical bounds infeasible at the control-point level.
+
+![Comparison of the three interpolation methods](paper/figures/Compare.png)
+
 ## Motivation
 
 In scientific and engineering applications, measurements are often available only at relatively sparse time points, while additional information may be known over the intervals between them.
@@ -230,6 +244,7 @@ constrained-bezier-interpolation/
 │   └── test_quartic_methods.py
 │
 ├── data/
+│   ├── README.md
 │   └── pegelonline_leunneu_2024.xlsx
 │
 ├── vba/
@@ -258,6 +273,8 @@ constrained-bezier-interpolation/
 │   └── workflows/
 │       └── tests.yml
 │
+├── .gitattributes
+├── .gitignore
 ├── README.md
 ├── requirements.txt
 └── requirements-dev.txt
@@ -267,7 +284,7 @@ The `src/` directory contains the three current Python interpolation methods tog
 
 The `examples/` directory contains the main numerical comparison script.
 
-The `tests/` directory contains automated regression and constraint tests for the shared quartic utilities and both quartic interpolation methods. The GitHub Actions workflow runs these tests automatically on every push and pull request.
+The `tests/` directory contains automated regression and constraint tests for the cubic method, shared quartic utilities, and both quartic interpolation methods. The GitHub Actions workflow runs the tests and the complete numerical comparison automatically on every push and pull request.
 
 The `data/` directory contains the example time-series data used in the numerical experiments.
 
@@ -298,7 +315,7 @@ It also evaluates method-specific constraint diagnostics, including:
 - lower-bound violation,
 - upper-bound violation.
 
-For the bounded quartic method, the control-polygon roughness is also reported as an additional diagnostic.
+For all three methods, the control-polygon roughness is also reported as an additional diagnostic.
 
 The script produces plots of the reconstructed time series and the corresponding residuals.
 
@@ -322,6 +339,8 @@ The timestamps are converted internally to elapsed hours relative to the first o
 A subset of the reference observations is then selected as support points using a configurable spacing.
 
 For each interval between consecutive support points, an interval mean is computed from the reference data and supplied to the interpolation methods as an additional constraint.
+
+The underlying hydrological measurements are from PEGELONLINE / WSV for the LEUN NEU gauge on the Lahn (station 25800200). The public PEGELONLINE data are provided under the Data Licence Germany – Zero – Version 2.0. See `data/README.md` for source and licence details.
 
 ## Installation
 
@@ -369,7 +388,7 @@ python -m pytest -q
 
 The tests verify the cubic and quartic interpolation constraints, shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, and expected failure for infeasible constraint combinations.
 
-A GitHub Actions workflow runs the same test suite automatically on every push and pull request.
+A GitHub Actions workflow runs the test suite and an end-to-end execution of the numerical comparison automatically on every push and pull request.
 
 ## Running the Main Experiment
 
@@ -377,6 +396,12 @@ Run the comparison from the repository root:
 
 ```bash
 python examples/compare_interpolation_methods.py
+```
+
+To save the comparison and residual figures without opening plot windows:
+
+```bash
+python examples/compare_interpolation_methods.py --save-plots results --no-show
 ```
 
 The main experimental settings can be modified directly in the script:
