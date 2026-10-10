@@ -23,3 +23,8 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q
+
+      - name: Run end-to-end numerical comparison
+        env:
+          MPLBACKEND: Agg
+        run: python examples/compare_interpolation_methods.py --save-plots /tmp/bezier-plots --no-show
