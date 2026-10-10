@@ -1,0 +1,60 @@
+name: refresh-artifacts
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: contains(github.event.head_commit.message, '[refresh-artifacts]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Regenerate numerical figures
+        env:
+          MPLBACKEND: Agg
+        run: python examples/compare_interpolation_methods.py --save-plots paper/figures --no-show
+
+      - name: Install LaTeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk \
+            biber \
+            lmodern \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-german \
+            texlive-pictures
+
+      - name: Compile technical report
+        working-directory: paper
+        run: |
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+          mv -f main.pdf constrained_bezier_interpolation.pdf
+
+      - name: Commit refreshed artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add paper/figures/Compare.png paper/figures/Residual_comparison.png paper/constrained_bezier_interpolation.pdf
+          if git diff --cached --quiet; then
+            echo "No artifact changes to commit."
+          else
+            git commit -m "Refresh numerical figures and report PDF [skip ci]"
+            git push
+          fi
