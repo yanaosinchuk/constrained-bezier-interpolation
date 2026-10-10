@@ -362,26 +362,3 @@ def _check_endpoint_bounds(y_nodes, lower_bound, upper_bound):
         )
 
 
-def _check_bounds_for_control_points(control_points, interval_index, lower_bound, upper_bound):
-
-    if lower_bound is not None and np.any(control_points < lower_bound):
-        min_value = float(np.min(control_points))
-        raise ValueError(
-            f"Infeasible lower bound on interval {interval_index}: "
-            f"a control point is {min_value:.12g}, below lower_bound={lower_bound}. "
-            "With exact endpoint values, exact mean and exact derivatives, "
-            "the quartic Bézier control points are uniquely determined. "
-            "Try strict_bounds=False for diagnostics or use smaller/slower "
-            "derivatives."
-        )
-
-    if upper_bound is not None and np.any(control_points > upper_bound):
-        max_value = float(np.max(control_points))
-        raise ValueError(
-            f"Infeasible upper bound on interval {interval_index}: "
-            f"a control point is {max_value:.12g}, above upper_bound={upper_bound}. "
-            "With exact endpoint values, exact mean and exact derivatives, "
-            "the quartic Bézier control points are uniquely determined. "
-            "Try strict_bounds=False for diagnostics or use smaller/slower "
-            "derivatives."
-        )
