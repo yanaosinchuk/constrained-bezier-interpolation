@@ -141,6 +141,18 @@ def add_dense_bound_diagnostics(constraints, y_values, lower_bound, upper_bound)
         )
 
 
+def raise_if_method_failed(results):
+    failures = {
+        name: info["error"]
+        for name, info in results.items()
+        if "error" in info
+    }
+
+    if failures:
+        details = "; ".join(f"{name}: {message}" for name, message in failures.items())
+        raise RuntimeError(f"One or more interpolation methods failed: {details}")
+
+
 def print_constraint_report(results):
     print()
     print("=" * 96)
@@ -397,6 +409,7 @@ def main(save_plots=None, show=True):
 
     print_metrics_table(results)
     print_constraint_report(results)
+    raise_if_method_failed(results)
 
     comparison_fig = plot_comparison(x_ref, y_ref, x_nodes, y_nodes, results)
     residual_fig = plot_residuals(results)
