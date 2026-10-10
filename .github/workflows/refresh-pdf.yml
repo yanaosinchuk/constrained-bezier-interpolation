@@ -1,0 +1,48 @@
+name: refresh-pdf
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: contains(github.event.head_commit.message, '[refresh-pdf]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install LaTeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk \
+            biber \
+            lmodern \
+            texlive-latex-extra \
+            texlive-bibtex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-german \
+            texlive-pictures
+
+      - name: Compile technical report
+        working-directory: paper
+        run: |
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+          mv -f main.pdf constrained_bezier_interpolation.pdf
+
+      - name: Commit refreshed PDF
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add paper/constrained_bezier_interpolation.pdf
+          if git diff --cached --quiet; then
+            echo "No PDF changes to commit."
+          else
+            git commit -m "Refresh technical report PDF [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
