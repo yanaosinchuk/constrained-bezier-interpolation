@@ -260,10 +260,12 @@ constrained-bezier-interpolation/
 │   └── pegelonline_leunneu_2024.xlsx
 │
 ├── vba/
+│   ├── README.md
 │   ├── modBezier.bas
 │   └── bounded_quartic_bezier_demo.xlsm
 │
 ├── paper/
+│   ├── README.md
 │   ├── main.tex
 │   ├── references.bib
 │   ├── constrained_bezier_interpolation.pdf
