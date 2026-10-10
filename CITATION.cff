@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite this repository."
+title: "Constrained Bézier Interpolation"
+type: software
+authors:
+  - family-names: Osinchuk
+    given-names: Yana
+repository-code: "https://github.com/yanaosinchuk/constrained-bezier-interpolation"
+license: MIT
+abstract: >-
+  Mean-preserving and bounded cubic and quartic Bézier interpolation methods
+  for sparse time-series data, with Python and Excel/VBA implementations.
