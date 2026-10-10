@@ -213,6 +213,7 @@ derivative_method="finite_difference"
 constrained-bezier-interpolation/
 │
 ├── src/
+│   ├── common.py
 │   ├── mean_preserving_cubic.py
 │   ├── exact_quartic_bezier.py
 │   └── bounded_quartic_bezier.py
@@ -247,8 +248,9 @@ constrained-bezier-interpolation/
 │
 ├── README.md
 └── requirements.txt
+```
 
-The `src/` directory contains the current Python implementations of the three interpolation methods.
+The `src/` directory contains the three current Python interpolation methods together with shared quartic utilities in `common.py`.
 
 The `examples/` directory contains the main numerical comparison script.
 
@@ -259,7 +261,6 @@ The `vba/` directory contains the Excel/VBA implementation of the final bounded 
 The `paper/` directory contains the complete LaTeX source, bibliography, figures, and compiled PDF of the accompanying technical report.
 
 The `archive/` directory contains earlier interpolation approaches retained to document the development of the final methods.
-```
 
 It compares:
 
