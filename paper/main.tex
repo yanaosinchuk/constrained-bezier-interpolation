@@ -1964,13 +1964,15 @@ the same maximum error of \(94.711293\), which is lower than the cubic value
 of \(113.560781\). This indicates that the quartic constructions handle the
 largest local deviations more effectively for the chosen support spacing.
 
-The roughness diagnostic leads to a different conclusion. The cubic
-construction has by far the smallest control-polygon roughness,
+The roughness diagnostic leads to a different numerical result. The cubic
+construction has the smallest reported control-polygon roughness,
 \(1.631647\times 10^{5}\). The exact quartic and bounded quartic values are
 \(2.768685\times 10^{6}\) and \(2.136015\times 10^{6}\), respectively.
-Consequently, the cubic construction is substantially smoother according to
-this discrete control-polygon diagnostic, whereas the quartic methods trade
-part of this smoothness for greater local flexibility.
+However, this quantity is not normalized with respect to polynomial degree:
+a cubic and a quartic control polygon contain different numbers of second
+differences. The roughness values should therefore be interpreted as
+degree-dependent diagnostics rather than as a standalone cross-degree ranking
+of smoothness.
 
 The exact quartic method lies between the cubic and bounded quartic methods in
 terms of RMSE and \(R^2\), but its MAE is the largest of the three. Its role in
@@ -2152,8 +2154,10 @@ all metrics.
 The comparison reveals a clear trade-off between smoothness, derivative
 fidelity, approximation accuracy, and physical admissibility.
 
-The cubic B\'ezier method is the simplest and smoothest of the three according
-to the control-polygon roughness diagnostic. It preserves endpoint values,
+The cubic B\'ezier method is the simplest and has the smallest value of the
+reported control-polygon roughness diagnostic. Because that diagnostic is not
+degree-normalized, it is interpreted only as supporting shape information
+rather than as an absolute cross-degree smoothness ranking. It preserves endpoint values,
 interval means, and the lower bound, and it achieves the smallest MAE. Its
 main disadvantage in this experiment is the larger RMSE and maximum absolute
 error.
@@ -2191,8 +2195,10 @@ still be enforced.
 
 The corrected numerical comparison does not produce one method that is best
 under every metric. The cubic method achieves the smallest MAE,
-\(5.330826\), and by far the smallest control-polygon roughness,
-\(1.631647\times 10^{5}\). The bounded quartic method achieves the smallest
+\(5.330826\), and the smallest reported control-polygon roughness,
+\(1.631647\times 10^{5}\). The roughness measure is degree-dependent and is
+therefore treated as a diagnostic rather than a normalized cross-degree
+performance metric. The bounded quartic method achieves the smallest
 RMSE, \(10.947902\), and the largest coefficient of determination,
 \(R^2=0.934376\). Both quartic methods reduce the maximum absolute error from
 \(113.560781\) for the cubic method to \(94.711293\).
