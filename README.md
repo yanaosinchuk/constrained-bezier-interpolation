@@ -226,6 +226,7 @@ constrained-bezier-interpolation/
 ├── tests/
 │   ├── conftest.py
 │   ├── test_common.py
+│   ├── test_cubic_method.py
 │   └── test_quartic_methods.py
 │
 ├── data/
@@ -366,7 +367,7 @@ Run the automated test suite from the repository root:
 python -m pytest -q
 ```
 
-The tests verify shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, and expected failure for infeasible constraint combinations.
+The tests verify the cubic and quartic interpolation constraints, shared quartic utilities, exact preservation of endpoint values and interval means, derivative matching for the exact quartic method, bound preservation and derivative softening for the bounded quartic method, and expected failure for infeasible constraint combinations.
 
 A GitHub Actions workflow runs the same test suite automatically on every push and pull request.
 
