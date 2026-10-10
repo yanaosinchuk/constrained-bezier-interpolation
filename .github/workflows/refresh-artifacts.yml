@@ -37,6 +37,7 @@ jobs:
             biber \
             lmodern \
             texlive-latex-extra \
+            texlive-bibtex-extra \
             texlive-fonts-recommended \
             texlive-lang-german \
             texlive-pictures
