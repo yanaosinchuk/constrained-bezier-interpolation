@@ -1,3 +1,4 @@
+import argparse
 import sys
 from pathlib import Path
 
@@ -143,7 +144,7 @@ def print_constraint_report(results):
 # ============================================================
 
 def plot_comparison(x_ref, y_ref, x_nodes, y_nodes, results):
-    plt.figure(figsize=(14, 7))
+    fig = plt.figure(figsize=(14, 7))
     plt.plot(x_ref, y_ref, label="Reference data", linewidth=1.3, alpha=0.75)
 
     for name, info in results.items():
@@ -161,9 +162,11 @@ def plot_comparison(x_ref, y_ref, x_nodes, y_nodes, results):
     plt.legend()
     plt.tight_layout()
 
+    return fig
+
 
 def plot_residuals(results):
-    plt.figure(figsize=(14, 6))
+    fig = plt.figure(figsize=(14, 6))
 
     for name, info in results.items():
         if "error" in info:
@@ -185,12 +188,14 @@ def plot_residuals(results):
     plt.legend()
     plt.tight_layout()
 
+    return fig
+
 
 # ============================================================
 # Main experiment
 # ============================================================
 
-def main():
+def main(save_plots=None, show=True):
     data_path = ROOT / "data" / "pegelonline_leunneu_2024.xlsx"
 
     step = 672
@@ -250,6 +255,9 @@ def main():
             ),
             "controls": controls,
         }
+        results[name]["constraints"]["control_polygon_roughness"] = (
+            compute_control_polygon_roughness(controls)
+        )
 
     except Exception as e:
         results[name] = {"error": str(e)}
@@ -294,6 +302,9 @@ def main():
             ),
             "controls": controls,
         }
+        results[name]["constraints"]["control_polygon_roughness"] = (
+            compute_control_polygon_roughness(controls)
+        )
 
     except Exception as e:
         results[name] = {"error": str(e)}
@@ -348,11 +359,47 @@ def main():
     print_metrics_table(results)
     print_constraint_report(results)
 
-    plot_comparison(x_ref, y_ref, x_nodes, y_nodes, results)
-    plot_residuals(results)
+    comparison_fig = plot_comparison(x_ref, y_ref, x_nodes, y_nodes, results)
+    residual_fig = plot_residuals(results)
 
-    plt.show()
+    if save_plots is not None:
+        output_dir = Path(save_plots)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        comparison_fig.savefig(
+            output_dir / "Compare.png",
+            dpi=200,
+            bbox_inches="tight",
+        )
+        residual_fig.savefig(
+            output_dir / "Residual_comparison.png",
+            dpi=200,
+            bbox_inches="tight",
+        )
+
+    if show:
+        plt.show()
+    else:
+        plt.close("all")
+
+    return results
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="Compare the constrained Bézier interpolation methods."
+    )
+    parser.add_argument(
+        "--save-plots",
+        type=Path,
+        default=None,
+        metavar="DIRECTORY",
+        help="Save Compare.png and Residual_comparison.png to this directory.",
+    )
+    parser.add_argument(
+        "--no-show",
+        action="store_true",
+        help="Do not open interactive plot windows.",
+    )
+    args = parser.parse_args()
+
+    main(save_plots=args.save_plots, show=not args.no_show)
