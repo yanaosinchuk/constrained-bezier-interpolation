@@ -20,7 +20,7 @@ Using 35,136 reference observations, 54 support points, and 53 interpolation int
 | Exact quartic | 11.242047 | 5.560609 | **94.711293** | 0.930802 | 2.768685e6 |
 | Bounded quartic | **10.947902** | 5.470358 | **94.711293** | **0.934376** | 2.136015e6 |
 
-The bounded quartic method gives the lowest RMSE and highest `R²` while preserving the physical lower bound. The cubic method remains competitive: it has the lowest MAE and by far the smallest control-polygon roughness. The exact quartic method is useful as a diagnostic reference because exact derivative matching can make the requested physical bounds infeasible at the control-point level.
+The bounded quartic method gives the lowest RMSE and highest `R²` while preserving the physical lower bound. The cubic method remains competitive: it has the lowest MAE and the smallest value of the reported control-polygon roughness diagnostic. Because the cubic and quartic control polygons have different degrees and different numbers of second differences, this roughness quantity is not a degree-normalized cross-method metric and should not be used as the sole ranking criterion. The exact quartic method is useful as a diagnostic reference because exact derivative matching can make the requested physical bounds infeasible at the control-point level.
 
 ![Comparison of the three interpolation methods](paper/figures/Compare.png)
 
