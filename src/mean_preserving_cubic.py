@@ -75,8 +75,8 @@ def _compute_bezier_control_points(y_nodes, means, lower_bound=None, upper_bound
 
     This gives the unconstrained preferred control points:
 
-        P1 = (2/3)*(y_i + y_{i+1}) - 2*mean_i
-        P2 = 6*mean_i - (5/3)*(y_i + y_{i+1})
+        P1 = 2*mean_i - (1/3)*y_i - (2/3)*y_{i+1}
+        P2 = 2*mean_i - (2/3)*y_i - (1/3)*y_{i+1}
 
     If physical bounds are given, the pair (P1, P2) is projected onto the
     feasible set defined by:
@@ -100,8 +100,8 @@ def _compute_bezier_control_points(y_nodes, means, lower_bound=None, upper_bound
         P0 = y0
         P3 = y1
 
-        preferred_P1 = (2.0 / 3.0) * (y0 + y1) - 2.0 * m
-        preferred_P2 = 6.0 * m - (5.0 / 3.0) * (y0 + y1)
+        preferred_P1 = 2.0 * m - (1.0 / 3.0) * y0 - (2.0 / 3.0) * y1
+        preferred_P2 = 2.0 * m - (2.0 / 3.0) * y0 - (1.0 / 3.0) * y1
 
         P1, P2 = _enforce_bounded_mean_pair(
             preferred_P1,
